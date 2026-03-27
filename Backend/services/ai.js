@@ -24,7 +24,7 @@ Return ONLY raw JSON in exactly this structure. No markdown. No explanation. No 
     "point 3",
     "point 4"
   ],
-  "improvements": "A direct paragraph pointing out what was weak, what was missing, and exactly what the candidate should work on to meet Google-level standards."
+  "improvements": "A direct paragraph pointing out what was weak, what was missing, and exactly what the candidate should work on to meet high class  standards."
 }
 
 Rules:
