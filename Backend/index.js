@@ -1,6 +1,6 @@
 import express from "express";
 import "dotenv/config";
-import { GoogleGenAI } from "@google/genai";
+import metrics from "./utils/metrics.js";
 
 const app = express();
 
@@ -12,13 +12,11 @@ app.listen(process.env.PORT || 3000, (req, res) => {
 });
 
 try {
-  const ai = new GoogleGenAI({});
-  const response = await ai.models.generateContent({
-    model: "gemini-3-flash-preview",
-    contents: "1+1",
+  const result = await metrics({
+    transcript: "Um I built a frontend application using JavaScript and React",
+    duration: 60,
   });
-
-  console.log(response.text);
+  console.log("from result:", result);
 } catch (error) {
   console.log(error);
 }
