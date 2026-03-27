@@ -1,14 +1,20 @@
-// import "dotenv/config";
-// import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
+import { GoogleGenAI } from "@google/genai";
 
-// // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+async function apiCall(content) {
+  try {
+    const ai = new GoogleGenAI({});
 
-// async function main() {
-//   const response = await ai.models.generateContent({
-//     model: "gemini-3-flash-preview",
-//     contents: "Explain how AI works in a few words",
-//   });
-//   console.log(response.text);
-// }
+    const response = await ai.models.generateContent({
+      model: "gemini-3-flash-preview",
+      contents: content,
+    });
 
-// export default ai;
+    return response.text;
+  } catch (error) {
+    console.log("API Error:", error);
+    return null;
+  }
+}
+
+export default apiCall;

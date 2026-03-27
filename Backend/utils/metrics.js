@@ -1,21 +1,4 @@
-import "dotenv/config";
-import { GoogleGenAI } from "@google/genai";
-
-async function apiCall(content) {
-  try {
-    const ai = new GoogleGenAI({});
-
-    const response = await ai.models.generateContent({
-      model: "gemini-2.5-pro",
-      contents: content,
-    });
-
-    return response.text;
-  } catch (error) {
-    console.log("API Error:", error);
-    return null;
-  }
-}
+import apiCall from "./GoogleGemini.js";
 
 const metrics = async (data) => {
   if (!data || !data.transcript || !data.duration) {
@@ -29,7 +12,7 @@ const metrics = async (data) => {
   const words = transcript.trim().split(/\s+/);
   const wordCount = words.length;
 
-  const speedWpm = wordCount / (data.duration / 60);
+  const speedWpm = data.duration > 0 ? wordCount / (data.duration / 60) : 0;
 
   const response = await apiCall(`
 Return ONLY raw JSON. No markdown. No explanation.
