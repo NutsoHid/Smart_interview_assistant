@@ -1,12 +1,6 @@
 import apiCall from "./GoogleGemini.js";
 
 const questionGenerate = async (formattedConversation) => {
-  const fixedQuestion = [
-    "How are you? What's your name?",
-    "What are your main fields of interest, skills, or areas you work in?",
-    "What projects are you currently working on, planning, or thinking about most these days?",
-  ];
-
   const question = await apiCall(`
 You are an intelligent interviewer.
 
