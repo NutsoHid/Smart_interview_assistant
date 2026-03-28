@@ -23,17 +23,15 @@ router.post("/", async (req, res) => {
       metrics.speed >= 120 && metrics.speed <= 160
         ? 100
         : metrics.speed < 120
-        ? (metrics.speed / 120) * 100
-        : Math.max(0, 100 - (metrics.speed - 160));
+          ? (metrics.speed / 120) * 100
+          : Math.max(0, 100 - (metrics.speed - 160));
 
     const score = Math.max(
       0,
       Math.min(
         100,
-        Math.round(
-          metrics.confidence * 0.5 + wpmScore * 0.5 - fillerPenalty
-        )
-      )
+        Math.round(metrics.confidence * 0.5 + wpmScore * 0.5 - fillerPenalty),
+      ),
     );
 
     res.json({

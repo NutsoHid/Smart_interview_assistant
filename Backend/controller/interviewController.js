@@ -1,7 +1,8 @@
 import metrics from "../utils/metrics.js";
 import questionGenerate from "../utils/questionGenerate.js";
-
-let conversation = [];
+import { generateFeedback } from "../services/ai.js";
+import { generateSuggestions } from "../services/suggestions.js";
+import { analyzeBehavior } from "../services/behavior.js";
 
 const fixedQuestions = [
   "Tell me briefly about yourself and your background.",
@@ -11,7 +12,7 @@ const fixedQuestions = [
 
 export const interviewHandler = async (req, res) => {
   try {
-    const { answer, duration } = req.body;
+    const { answer, duration, conversation = [] } = req.body;
 
     if (!answer) {
       return res.status(400).json({
@@ -24,13 +25,16 @@ export const interviewHandler = async (req, res) => {
     if (conversation.length < fixedQuestions.length) {
       currentQuestion = fixedQuestions[conversation.length];
     } else {
-      currentQuestion = conversation[conversation.length - 1].question;
+      currentQuestion = conversation[conversation.length - 1].nextQuestion;
     }
 
-    conversation.push({
-      question: currentQuestion,
-      answer,
-    });
+    const updatedConversation = [
+      ...conversation,
+      {
+        question: currentQuestion,
+        answer,
+      },
+    ];
 
     const score = await metrics({
       transcript: answer,
@@ -39,10 +43,10 @@ export const interviewHandler = async (req, res) => {
 
     let nextQuestion;
 
-    if (conversation.length < fixedQuestions.length) {
-      nextQuestion = fixedQuestions[conversation.length];
+    if (updatedConversation.length < fixedQuestions.length) {
+      nextQuestion = fixedQuestions[updatedConversation.length];
     } else {
-      const formattedConversation = conversation
+      const formattedConversation = updatedConversation
         .map(
           (item, index) =>
             `Q${index + 1}: ${item.question}\nA${index + 1}: ${item.answer}`,
@@ -52,11 +56,21 @@ export const interviewHandler = async (req, res) => {
       nextQuestion = await questionGenerate(formattedConversation);
     }
 
+    updatedConversation[updatedConversation.length - 1].nextQuestion =
+      nextQuestion;
+
+    const feedback = await generateFeedback(answer);
+    const suggestions = generateSuggestions(score);
+    const behavior = analyzeBehavior(score);
+
     res.json({
       currentQuestion,
       nextQuestion,
-      score,
-      conversation,
+      metrics: score,
+      feedback,
+      suggestions,
+      behavior,
+      conversation: updatedConversation,
     });
   } catch (error) {
     console.log(error);

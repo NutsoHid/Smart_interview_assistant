@@ -1,4 +1,4 @@
-# Smart Interview
+# InterviewIQ
 
 ## Description
 

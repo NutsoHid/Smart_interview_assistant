@@ -1,21 +1,29 @@
-import apiCall from "./GoogleGemini.js";
+import { GoogleGenAI } from "@google/genai";
+import "dotenv/config";
+
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
+});
 
 const questionGenerate = async (formattedConversation) => {
-  const question = await apiCall(`
-You are an intelligent interviewer.
+  try {
+    const response = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents: `
+You are an interviewer.
 
 Conversation:
 ${formattedConversation}
 
-Rules:
-- Analyze answers deeply
-- Generate exactly 1 next question
-- Do not repeat previous questions
-- Keep it short, natural, conversational
-- Output only the question
-`);
+Generate exactly one next technical interview question.
+Output only question.
+`,
+    });
 
-  return question;
+    return response.text || "Can you explain further?";
+  } catch {
+    return "Can you explain further?";
+  }
 };
 
 export default questionGenerate;

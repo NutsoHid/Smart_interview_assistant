@@ -1,13 +1,7 @@
 function analyzeBehavior(metrics) {
-  let behavior = "Neutral";
-
-  if (metrics.filler_word > 8) {
-    behavior = "Nervous";
-  } else if (metrics.confidence > 80) {
-    behavior = "Confident";
-  }
-
-  return behavior;
+  if (metrics.filler_word > 8) return "Nervous";
+  if (metrics.confidence > 80) return "Confident";
+  return "Neutral";
 }
 
 export { analyzeBehavior };
